@@ -1,0 +1,19 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 282px);
+  grid-row-gap: 20px;
+  grid-column-gap: 17px;
+  list-style-type: none;
+  padding: 0;
+  box-sizing: border-box;
+  margin: auto;
+  padding-top: 52px;
+  color: #000000;
+  min-height: 40vh;
+}
+
+@media (max-width: 544px) {
+  .gallery {
+    padding-top: 36px;
+  }
+}
