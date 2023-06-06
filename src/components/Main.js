@@ -16,6 +16,9 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick }) {
         setUserName(name);
         setUserAvatar(avatar);
       })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
   }, []);
 
   React.useEffect(() => {
@@ -24,6 +27,9 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick }) {
       .then((card) => {
         setCards(card);
       })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
   }, []);
 
   return (
@@ -43,7 +49,7 @@ function Main({ onEditAvatar, onEditProfile, onAddPlace, onCardClick }) {
       </section>
       <section className="gallery">
         {cards?.map((card) => (
-          <Card key={card._id} card={card} link={card.link} title={card.name} likes={card.likes.length} onCardClick={onCardClick} />
+          <Card key={card._id} card={card}  onCardClick={onCardClick} />
         ))}
       </section>
     </main>

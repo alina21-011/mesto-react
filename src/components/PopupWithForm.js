@@ -8,7 +8,7 @@ function PopupWithForm({popup, title,isOpen, form, children, submitButtonText, o
           <button className="popup__close"  onClick={onClose} type="reset" aria-label="Закрыть"></button>
           <h2 className="popup__title">{title}</h2>
           <form className="popup__form popup__form_profile" method="post"   name ={`form-${form}`} noValidate>
-          ${children}
+          {children}
             <button type="submit" className="popup__input-save"> {submitButtonText}</button>
           </form>
         </div>

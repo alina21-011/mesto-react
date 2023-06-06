@@ -11,7 +11,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isImagePopupOpen, setIsImagePopupOpen] = React.useState(false);
+
   const [selectedCard, setSelectedCard] = React.useState(null);
 
 
@@ -63,14 +63,16 @@ function App() {
         popup={'popup_edit'}
         form={'profile'}
         submitButtonText={'Сохранить'}
-        onClose={closeAllPopups}
-        children={<><input id="name" type="text" className="popup__input popup__input_data_name" required name="name" placeholder="Имя"
+        onClose={closeAllPopups}>
+       
+       <input id="name" type="text" className="popup__input popup__input_data_name" required name="name" placeholder="Имя"
           minLength="2" maxLength="40"></input>
           <span id="name-error" className="popup__error name-error"></span>
           <input id="info" type="text" className="popup__input popup__input_data_info" required name="info"
             placeholder="Информация о себе" minLength="2" maxLength="200"></input>
-          <span id="info-error" className="popup__error info-error"></span> </>}
-      />
+          <span id="info-error" className="popup__error info-error"></span> 
+          </PopupWithForm>
+           
 
       <PopupWithForm
         title={'Новое место'}
@@ -78,16 +80,16 @@ function App() {
         popup={'popup_add'}
         form={'card'}
         submitButtonText={'Создать'}
-        onClose={closeAllPopups}
-        children={<> <input id="title" type="text" className="popup__input popup__input_data_title" required name="name"
+        onClose={closeAllPopups}>
+         <input id="title" type="text" className="popup__input popup__input_data_title" required name="name"
           placeholder="Название" minLength="2" maxLength="30"></input>
           <span id="title-error" className="popup__error title-error"></span>
 
           <input id="url" type="url" className="popup__input popup__input_data_url" required name="link"
             placeholder="Ссылка на картинку"></input>
           <span id="url-error" className="popup__error url-error"></span>
-        </>}
-      />
+        
+        </PopupWithForm>
 
       <PopupWithForm
         title={'Обновить аватар'}
@@ -96,12 +98,12 @@ function App() {
         form={'avatar'}
         submitButtonText={'Сохранить'}
         onClose={closeAllPopups}
-        children={<>
+        >
           <input id="url-avatar" type="url" className="popup__input popup__input_data_url popup__input_link" name="avatar"
             placeholder="Ссылка на картинку" required></input>
           <span id="url-avatar-error" className="popup__error url-avatar-error"></span>
-        </>}
-      />
+      
+          </PopupWithForm>
 
       <ImagePopup
         popup={'photo'}
