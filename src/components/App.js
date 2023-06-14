@@ -3,16 +3,58 @@ import React from "react";
 import Header from './Header'
 import Footer from './Footer'
 import Main from './Main'
-import PopupWithForm from './PopupWithForm'
+
 import ImagePopup from './ImagePopup'
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import api from "../utils/Api";
+import EditProfilePopup from './EditProfilePopup'
+import EditAvatarPopup from './EditAvatarPopup'
+import AddPlacePopup from './AddPlacePopup'
 
 
 function App() {
+  const [cards, setCards] = React.useState([]);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-
+  const [currentUser, setCurrentUser] = React.useState({});
   const [selectedCard, setSelectedCard] = React.useState(null);
+
+  React.useEffect(() => {
+    api.getCards()
+    .then((card) => {
+      setCards(card);
+    }) 
+    .catch((err) => {
+      console.log(`Ошибка ${err}`);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    api
+      .getUserData()
+      .then((data) => {
+        setCurrentUser(data);
+      })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
+  }, []);
+
+
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    api.changeLikeCardStatus(card._id, isLiked)
+      .then((newCard) => {
+        setCards((state) =>
+          state.map((c) => c._id === card._id ? newCard : c)
+        );
+      })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
+  }
 
 
   function handleCardClick(selectedCard) {
@@ -42,74 +84,105 @@ function App() {
 
   }
 
+  
+
+  function handleCardDelete(card) {
+    api
+      .deleteCard(card._id)
+      .then(() => {
+        setCards((prevCards) => prevCards.filter((c) => c._id !== card._id));
+
+      })
+  
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+       
+      });
+  }
+
+  
+
+
+  function handleUpdateUser(data) {
+    api
+      .setUserData(data.name, data.about)
+      .then((serverData) => {
+        setCurrentUser(serverData);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
+  }
+  function handleUpdateAvatar(data) {
+    api
+      .editUserAvatar(data.avatar)
+      .then((serverData) => {
+        setCurrentUser(serverData);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
+  }
+
+  function handleAddPlaceSubmit(card) {
+    api
+      .addNewCard(card.name, card.link)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка ${err}`);
+      });
+  }
 
 
   return (
     <div className="page">
+       <CurrentUserContext.Provider value={currentUser}>
       <Header />
       <Main
-
+        cards={cards}
         onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
         onEditAvatar={handleEditAvatarClick}
         onCardClick={handleCardClick}
+        onCardLike ={handleCardLike}
+        onCardDelete={handleCardDelete}
 
       />
       <Footer />
 
-      <PopupWithForm
-        title={'Редактировать профиль'}
-        isOpen={isEditProfilePopupOpen}
-        popup={'popup_edit'}
-        form={'profile'}
-        submitButtonText={'Сохранить'}
-        onClose={closeAllPopups}>
-       
-       <input id="name" type="text" className="popup__input popup__input_data_name" required name="name" placeholder="Имя"
-          minLength="2" maxLength="40"></input>
-          <span id="name-error" className="popup__error name-error"></span>
-          <input id="info" type="text" className="popup__input popup__input_data_info" required name="info"
-            placeholder="Информация о себе" minLength="2" maxLength="200"></input>
-          <span id="info-error" className="popup__error info-error"></span> 
-          </PopupWithForm>
+      <EditProfilePopup 
+      isOpen={isEditProfilePopupOpen} 
+      onClose={closeAllPopups} 
+      onUpdateUser={handleUpdateUser}
+      />
            
 
-      <PopupWithForm
-        title={'Новое место'}
-        isOpen={isAddPlacePopupOpen}
-        popup={'popup_add'}
-        form={'card'}
-        submitButtonText={'Создать'}
-        onClose={closeAllPopups}>
-         <input id="title" type="text" className="popup__input popup__input_data_title" required name="name"
-          placeholder="Название" minLength="2" maxLength="30"></input>
-          <span id="title-error" className="popup__error title-error"></span>
-
-          <input id="url" type="url" className="popup__input popup__input_data_url" required name="link"
-            placeholder="Ссылка на картинку"></input>
-          <span id="url-error" className="popup__error url-error"></span>
+      <AddPlacePopup
+           isOpen={isAddPlacePopupOpen} 
+           onClose={closeAllPopups} 
+           buttonText="Создать"
+           onAddPlace={handleAddPlaceSubmit}
+           
         
-        </PopupWithForm>
+        />
 
-      <PopupWithForm
-        title={'Обновить аватар'}
-        isOpen={isEditAvatarPopupOpen}
-        popup={'popup_avatar'}
-        form={'avatar'}
-        submitButtonText={'Сохранить'}
-        onClose={closeAllPopups}
-        >
-          <input id="url-avatar" type="url" className="popup__input popup__input_data_url popup__input_link" name="avatar"
-            placeholder="Ссылка на картинку" required></input>
-          <span id="url-avatar-error" className="popup__error url-avatar-error"></span>
+        <EditAvatarPopup 
+        isOpen={isEditAvatarPopupOpen} 
+        onClose={closeAllPopups} 
+        onUpdateAvatar={handleUpdateAvatar}
+        />
       
-          </PopupWithForm>
-
       <ImagePopup
         popup={'photo'}
         card={selectedCard}
         onClose={closeAllPopups}
       />
+      </CurrentUserContext.Provider>
     </div>
   );
 }

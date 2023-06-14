@@ -46,7 +46,7 @@ class Api {
       }),
     }).then((res) => this._checkResponce(res));
   }
-
+  
   deleteCard(cardId) {
     return fetch(`${this._baseUrl}/cards/${cardId}`, {
       method: 'DELETE',
@@ -81,6 +81,9 @@ class Api {
 
   }
 
+  changeLikeCardStatus(cardId, isLiked) {
+    return isLiked ? this.deleteLike(cardId) : this.addLike(cardId);
+  }
 }
 
 const api = new Api({
