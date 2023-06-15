@@ -23,7 +23,7 @@ const Card = (props) => {
   }
 
   return (
-    <article className="place" key={card._id}>
+    <article className="place">
       <div className="place__image">
         <img className="place__photo" alt={card.name} src={card.link} onClick={handleClickImage}></img>
       </div>
